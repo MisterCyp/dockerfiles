@@ -1,5 +1,5 @@
 FROM alpine:3.3
-MAINTAINER Wonderfall <wonderfall@mondedie.fr>
+MAINTAINER MisterCyp <https://github.com/MisterCyp>
 
 ARG NGINX_VER=1.10.0
 ARG LIBRESSL_VER=2.3.3
@@ -28,9 +28,12 @@ RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/ap
     zlib \
     libgcc \
     libstdc++ \
-    su-exec \
     openssl \
     tini@commuedge \
+    php7@testing \
+    php7-fpm@testing \
+    php7-json@testing \
+    supervisor \
  && cd /tmp && git clone https://github.com/bagder/libbrotli && cd libbrotli \
  && ./autogen.sh && ./configure && make -j $NB_CORES && make install \
  && mkdir /tmp/ngx_brotli && cd /tmp/ngx_brotli \
@@ -81,14 +84,14 @@ RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/ap
  && apk del $BUILD_DEPS \
  && rm -rf /tmp/* /var/cache/apk/*
 
-COPY nginx.conf /etc/nginx/conf/nginx.conf
+COPY rootfs /
 COPY run.sh /usr/local/bin/run.sh
 COPY ngxpasswd /usr/local/bin/ngxpasswd
 
 RUN chmod +x /usr/local/bin/*
 
 EXPOSE 8000 4430
-VOLUME /sites-enabled /conf.d /passwds /certs /var/log/nginx
+VOLUME /sites-enabled /conf.d /passwds /certs /var/log/nginx /var/www
 
 LABEL description="Secure reverse proxy using nginx" \
       libressl="LibreSSL v$LIBRESSL_VER" \
