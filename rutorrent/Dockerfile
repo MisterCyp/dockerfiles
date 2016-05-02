@@ -36,7 +36,6 @@ RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/ap
  && wget http://www.sendbox.fr/a542c550bcde658d/MaterialDesign.zip \
  && unzip MaterialDesign.zip && rm MaterialDesign.zip \
  && mv /var/www/rutorrent /var/www/torrent \
- && mkdir /filebot \
  && apk del ${BUILD_DEPS} \
  && deluser svn && delgroup svnusers \
  && rm -rf /var/cache/apk/* /tmp/*
