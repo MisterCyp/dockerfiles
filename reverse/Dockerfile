@@ -9,6 +9,8 @@ ARG BUILD_CORES
 ENV UID=991 GID=991
 
 RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+ && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+ && echo "@community http://nl.alpinelinux.org/alpine/v3.3/community/" >> /etc/apk/repositories \
  && NB_CORES=${BUILD_CORES-`getconf _NPROCESSORS_CONF`} \
  && BUILD_DEPS=" \
     build-base \
