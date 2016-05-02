@@ -18,7 +18,13 @@ else
     sed -i 's|<folder>|/torrent|g' /sites/rutorrent.conf
 fi
 
-chown -R torrent:torrent /data /var/www /home/torrent /var/lib/nginx /filebot /tmp
+if [ ! -f "/home/torrent/.rtorrent.rc" ];then
+    cd /
+    mv .rtorrent.rc /home/torrent/.rtorrent.rc
+fi
+
+chown -R torrent:torrent /data /var/www /home/torrent /var/lib/nginx /var/log/nginx /tmp
+
 rm -f /data/.session/rtorrent.lock
 
 /usr/bin/supervisord -c /etc/supervisord.conf

@@ -13,7 +13,7 @@
 	$log_file = '/tmp/errors.log';
 	$saveUploadedTorrents = true;
 	$overwriteUploadedTorrents = false;
-	$topDirectory = '/data/torrents';
+	$topDirectory = '/data';
 	$forbidUserSettings = false;
 	$scgi_port = 5000;
 	$scgi_host = "127.0.0.1";
