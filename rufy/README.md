@@ -16,7 +16,7 @@ port utilisé dans le conteneur : 80
 #### Comment l'utiliser ?
 #####Docker Run:
 ```
-docker run -d -p 1234:80 -e WEBROOT=/rufy -e UID=1000 -e GID=1000 --name rufy mistercyp/rufy
+docker run -d -p 1234:80 -e WEBROOT=/rufy -e UID=1000 -e GID=1000 -v /home/cyprien/seedbox/.watch:/watch --name rufy mistercyp/rufy
 ```
 Accès :  http://votreIPouNDD.tld:1234/rufy
 
