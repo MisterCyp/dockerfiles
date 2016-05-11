@@ -17,8 +17,6 @@ cp -v /var/www/RuFy/config/db-init.sqlite3 /var/www/RuFy/db.sqlite3
 
 mkdir -p /var/www/RuFy/log
 
-touch /var/www/RuFy/log/gunicorn_supervisor.log
-
 /var/www/RuFy/venv/bin/python /var/www/RuFy/manage.py collectstatic_js_reverse
 
 chown -R rufy:rufy /var/www/RuFy /watch /tmp
