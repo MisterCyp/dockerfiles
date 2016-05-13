@@ -28,6 +28,6 @@ RUN export BUILD_DEPS="git \
 COPY rootfs /
 RUN chmod +x /usr/local/bin/run.sh
 EXPOSE 80
-VOLUME /watch /var/www/RuFy/log 
+VOLUME /watch /var/www/RuFy/log /var/www/RuFy/db
 
 CMD ["sh","/usr/local/bin/run.sh"]

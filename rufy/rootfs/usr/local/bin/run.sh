@@ -13,7 +13,9 @@ else
     sed -i -e '\#URI# s#rufy/##' /var/www/RuFy/RuFy/urls.py
 fi
 
-cp -v /var/www/RuFy/config/db-init.sqlite3 /var/www/RuFy/db.sqlite3
+if [ ! -f "/var/www/RuFy/db/db.sqlite3" ];then
+    mv -v /var/www/RuFy/config/db-init.sqlite3 /var/www/RuFy/db/db.sqlite3
+fi
 
 mkdir -p /var/www/RuFy/log
 
