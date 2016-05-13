@@ -3,22 +3,23 @@
 
 #### Volumes
 - **/watch** : Dossier watch de RuTorrent
-- **/var/www/RuFy/log** : log des accËs 
-
+- **/var/www/RuFy/log** : log des acc√®s 
+- **/var/www/RuFy/db** : base de donn√©es
+- 
 ####Port
-port utilisÈ dans le conteneur : 80 
+port utilis√© dans le conteneur : 80 
 
 #### Variables d'environnement
-- WEBROOT : URI d'accËs ‡ RuFy (par dÈfaut : /rufy)
-- UID : uid de l'utilisateur qui lance RuFy (par dÈfaut 1000)
-- GID : groupe de l'utilisateur qui lance RuFy (par dÈfaut 1000)
+- WEBROOT : URI d'acc√®s √† RuFy (par d√©faut : /rufy)
+- UID : uid de l'utilisateur qui lance RuFy (par d√©faut 1000)
+- GID : groupe de l'utilisateur qui lance RuFy (par d√©faut 1000)
 
 #### Comment l'utiliser ?
 #####Docker Run:
 ```
 docker run -d -p 1234:80 -e WEBROOT=/rufy -e UID=1000 -e GID=1000 -v /home/cyprien/seedbox/.watch:/watch --name rufy mistercyp/rufy
 ```
-AccËs :  http://votreIPouNDD.tld:1234/rufy
+Acc√®s :  http://votreIPouNDD.tld:1234/rufy
 
 #####Docker-compose.yml :
 ```
