@@ -29,6 +29,12 @@ RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/ap
  && git clone https://github.com/Novik/ruTorrent.git rutorrent \
  && cd /var/www/rutorrent/plugins/ \
  && git clone https://github.com/xombiemp/rutorrentMobile.git mobile \
+ && cd /var/www/rutorrent/plugins/ \
+ && svn checkout http://rutorrent-pausewebui.googlecode.com/svn/trunk pausewebui \
+ && cd /var/www/rutorrent/plugins/theme/themes \
+ && wget https://raw.githubusercontent.com/Swizards/QuickBox/master/plugins/rutorrent-quickbox-dark.zip \
+ && unzip rutorrent-quickbox-dark.zip \
+ && rm -rf rutorrent-quickbox-dark.zip \
  && cd /var/www/rutorrent/plugins/theme/themes \
  && git clone https://github.com/exetico/FlatUI.git \
  && mv FlatUI/FlatUI_* . && rm -rf FlatUI \
