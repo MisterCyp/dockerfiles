@@ -1,0 +1,20 @@
+#!/bin/sh
+deluser sickrage
+delgroup sickrage
+[[ ${GID} -ne 0 ]] && addgroup -g ${GID} sickrage && GROUP="sickrage" || GROUP="root"
+[[ ${UID} -ne 0 ]] && adduser -h /home/sickrage -s /bin/sh -D -G sickrage -u ${UID} sickrage && USER="sickrage" || USER="root"
+
+if [ ! -f /config/config.ini ]
+then
+    if [ -z ${APIKEY} ]; then
+        APIKEY=$(date +%s | md5sum | head -c 32)
+    fi
+	mv /tmp/config.ini /config/config.ini
+	sed -i "s|<webroot>|"${WEBROOT}"|" /config/config.ini
+    sed -i "s|<apikey>|"${APIKEY}"|" /config/config.ini
+fi
+
+chown -R ${USER}:${GROUP} /config
+chown -R ${USER}:${GROUP} /SickRage
+
+gosu ${USER}:${GROUP} sh -c "cd /SickRage && /usr/bin/python /SickRage/SickBeard.py --datadir=/config"
