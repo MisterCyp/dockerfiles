@@ -1,0 +1,21 @@
+#!/bin/sh
+
+[[ ${GID} -ne 0 ]] && addgroup -g ${GID} couch && GROUP="couch" || GROUP="root"
+[[ ${UID} -ne 0 ]] && adduser -h /home/couch -s /bin/sh -D -G couch -u ${UID} couch && USER="couch" || USER="root"
+
+if [ ! -f /config/config.ini ]
+then
+    if [ -z ${APIKEY} ]; then
+        APIKEY=$(date +%s | md5sum | head -c 32)
+    fi
+    mv /tmp/config.ini /config/config.ini
+    sed -i "s|<webroot>|"${WEBROOT}"|" /config/config.ini
+    sed -i "s|<apikey>|"${APIKEY}"|" /config/config.ini
+fi
+
+
+mkdir -p /config/data
+chown -R ${USER}:${GROUP} /config
+chown -R ${USER}:${GROUP} /CouchPotatoServer
+
+gosu ${USER}:${GROUP} sh -c "cd /CouchPotatoServer && /usr/bin/python /CouchPotatoServer/CouchPotato.py --config_file=/config/config.ini --data_dir=/config/data --console_log"
