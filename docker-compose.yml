@@ -1,198 +1,244 @@
-﻿version: '2'
-services:
-  nginx:
-    container_name: nginx
-    image: mistercyp/reverse
-    # build:
-      # context: /home/cyprien/docker/dockerfiles/reverse
-      # dockerfile: Dockerfile
-      # args:
-        # - NGINX_VER=1.9.10
-        # - LIBRESSL_VER=2.3.2
-        # - BUILD_CORES=8
-    ports:
-      - "80:8000"
-      - "443:4430"
-    links:
-      - php:php
-      - rutorrent:rutorrent
-      - emby:emby
-      - sickrage:sickrage
-      - rufy:rufy
-      - owncloud:owncloud
-    volumes:
-     - /home/cyprien/docker/containers/nginx/sites:/sites-enabled
-     - /home/cyprien/docker/containers/nginx/conf:/conf.d
-     - /etc/letsencrypt:/certs
-     - /home/cyprien/docker/containers/nginx/log:/var/log/nginx
-     - /home/cyprien/docker/containers/nginx/www:/var/www/html
-     - /home/cyprien/docker/containers/nginx/passwds:/passwds
-     - /home/cyprien/seedbox:/home/cyprien/seedbox
-     - /home/cyprien/Media:/home/cyprien/Media
+﻿nginx:
+  restart: always
+  container_name: nginx
+  image: mistercyp/reverse
+  ports:
+    - "80:8000"
+    - "443:4430"
+  links:
+    - php:php
+    - rutorrent:rutorrent
+    # - emby:emby
+    - sickrage:sickrage
+    - couchpotato:couchpotato
+    - rufy:rufy
+    - owncloud:owncloud
+    - postfixadmin:postfixadmin
+    - rainloop:rainloop
+    #- sharelatex:sharelatex
+  volumes:
+   - /home/cyprien/docker/containers/nginx/sites:/sites-enabled
+   - /home/cyprien/docker/containers/nginx/conf:/conf.d
+   - /etc/letsencrypt:/certs
+   - /home/cyprien/docker/containers/nginx/log:/var/log/nginx
+   - /home/cyprien/docker/containers/nginx/www:/var/www/html
+   - /home/cyprien/docker/containers/nginx/passwds:/passwds
+
     
-  php:
-    container_name: php
-    #php:fpm-alpine
-    image: php-intl 
-    links:
-      - db_media:db_media
-    volumes:
-      - /home/cyprien/docker/containers/nginx/www:/var/www/html
-      - /home/cyprien/seedbox:/home/cyprien/seedbox
-      - /home/cyprien/Media:/home/cyprien/Media
-      
-  db_media:
-    image: mariadb:10
-    container_name: db_media
-    volumes:
-      - /home/cyprien/docker/containers/media/db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=supersecretpassword
-      - MYSQL_DATABASE=media
-      - MYSQL_USER=media
-      - MYSQL_PASSWORD=supersecretpassword
-      
-  rutorrent:
-    image: mistercyp/rutorrent
+php:
+  container_name: php
+  image: php-intl 
+  volumes:
+    - /home/cyprien/docker/containers/nginx/www:/var/www/html
+    
+rutorrent:
+  image: mistercyp/rutorrent
    # build:
    #  context: /home/cyprien/docker/dockerfiles/rutorrent
    #  dockerfile: Dockerfile
-    container_name: rutorrent
-    environment:
-      - WEBROOT=/rutorrent
-      - UID=1000
-      - GID=1000
-    ports:
-      - "49184:49184"
-      - "49184:49184/udp"
-    volumes:
-      - /home/cyprien/seedbox:/data
-      - /home/cyprien/seedbox/rutorrent/rc:/home/torrent 
-      - /home/cyprien/seedbox/rutorrent/log:/var/log/nginx 
-  emby:
-    container_name: emby
-    image: xataz/emby
-    environment:
-      - UID=1000
-      - GID=1000
-    ports:
-      - "8096:8096"
-      - "8920:8920"
-    volumes:
-      - /home/cyprien/docker/containers/emby/config:/embyData
-      - /home/cyprien/seedbox/Media:/Media
+  container_name: rutorrent
+  environment:
+    - WEBROOT=/rutorrent
+    - UID=1000
+    - GID=1000
+  ports:
+    - "49184:49184"
+    - "49184:49184/udp"
+  volumes:
+    - /home/cyprien/seedbox:/data
+    - /home/cyprien/seedbox/rutorrent/rc:/home/torrent 
+    - /home/cyprien/seedbox/rutorrent/log:/var/log/nginx 
+# emby:
+  # container_name: emby
+  # image: xataz/emby
+  # environment:
+    # - UID=1000
+    # - GID=1000
+  # ports:
+    # - "8096:8096"
+    # - "8920:8920"
+  # volumes:
+    # - /home/cyprien/docker/containers/emby/config:/embyData
+    # - /home/cyprien/seedbox/Media:/Media
       
-  sickrage:
-    container_name: sickrage
-    image: mistercyp/sickrage
-    environment:
-      - UID=1000
-      - GID=1000
-      - WEBROOT=/sickrage
-    volumes:
-      - /home/cyprien/docker/containers/sickrage:/config
-      - /home/cyprien/seedbox:/seedbox
+sickrage:
+  container_name: sickrage
+  restart: always
+  image: mistercyp/sickrage
+  environment:
+    - UID=1000
+    - GID=1000
+    - WEBROOT=/sickrage
+  volumes:
+    - /home/cyprien/docker/containers/sickrage:/config
+    - /home/cyprien/seedbox:/seedbox
   
-  rufy:
-    container_name: rufy
-    image: mistercyp/rufy
-    environment:
-      - UID=1000
-      - GID=1000
-      - WEBROOT=/rufy
-    volumes:
-      - /home/cyprien/docker/containers/nginx/log:/var/www/RuFy/log
-      - /home/cyprien/docker/containers/rufy/db:/var/www/RuFy/db
-      - /home/cyprien/seedbox/.watch:/watch
-  owncloud:
-    image: wonderfall/owncloud:9.0
-    container_name: owncloud
-    links:
-      - db_owncloud:db_owncloud
-    environment:
-      - UID=1000
-      - GID=1000
-    volumes:
-      - /home/cyprien/docker/containers/owncloud/data:/data
-      - /home/cyprien/docker/containers/owncloud/config:/config
-      - /home/cyprien/docker/containers/owncloud/apps:/apps2
+rufy:
+  container_name: rufy
+  image: mistercyp/rufy
+  environment:
+    - UID=1000
+    - GID=1000
+    - WEBROOT=/rufy
+  volumes:
+    - /home/cyprien/docker/containers/nginx/log:/var/www/RuFy/log
+    - /home/cyprien/docker/containers/rufy/db:/var/www/RuFy/db
+    - /home/cyprien/seedbox/.watch:/watch
+owncloud:
+  image: wonderfall/owncloud:9.0
+  container_name: owncloud
+  links:
+    - db_owncloud:db_owncloud
+  environment:
+    - UID=1000
+    - GID=1000
+  volumes:
+    - /home/cyprien/docker/containers/owncloud/data:/data
+    - /home/cyprien/docker/containers/owncloud/config:/config
+    - /home/cyprien/docker/containers/owncloud/apps:/apps2
 
-  db_owncloud:
-    image: mariadb:10
-    container_name: db_owncloud
-    volumes:
-      - /home/cyprien/docker/containers/owncloud/db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=supersecretpassword
-      - MYSQL_DATABASE=owncloud
-      - MYSQL_USER=owncloud
-      - MYSQL_PASSWORD=supersecretpassword
-  # wordpress:
-    # image: wordpress
-    # environment:
-      # - WORDPRESS_DB_HOST=mysql
-      # - WORDPRESS_DB_PASSWORD=lefebvre
-    # links:
-      # - db-wordpress:mysql
-    # volumes:
-      # - /home/cyprien/docker/containers/wordpress:/var/www/html
-
-  # db-wordpress:
-    # image: mariadb
-    # environment:
-      # - MYSQL_ROOT_PASSWORD=lefebvre
-    # volumes:
-      # - /home/cyprien/docker/containers/db/wordpress:/var/lib/mysql
+db_owncloud:
+  image: mariadb:10
+  container_name: db_owncloud
+  volumes:
+    - /home/cyprien/docker/containers/owncloud/db:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=supersecretpassword
+    - MYSQL_DATABASE=owncloud
+    - MYSQL_USER=owncloud
+    - MYSQL_PASSWORD=supersecretpassword
+    
+couchpotato:
+  container_name: couchpotato
+  image: mistercyp/couchpotato
+  environment:
+    - UID=1000
+    - GID=1000
+    - WEBROOT=/cp
+  volumes:
+    - /home/cyprien/docker/containers/couchpotato:/config
+    - /home/cyprien/seedbox:/seedbox
       
-  # mailserver:
-    # image: hardware/mailserver
-    # container_name: mailserver
-    # domainname: homedia.ovh
-    # hostname: mail
-    # links:
-      # - db-mail:mariadb
-    # ports:
-      # - "25:25"     # SMTP                - Required
-      # - "143:143"   # IMAP       STARTTLS - For webmails/desktop clients
-      # - "465:465"   # SMTPS      SSL/TLS  - Enabled for compatibility reason, otherwise disabled
-      # - "587:587"   # Submission STARTTLS - For webmails/desktop clients
-      # - "993:993"   # IMAPS      SSL/TLS  - For webmails/desktop clients
-      # - "4190:4190" # SIEVE      STARTTLS - Optional, but recommended for mail filtering
-    # environment:
-      # - DBPASS=lefebvre
-    # volumes:
-      # - /home/cyprien/docker/containers/mail:/var/mail
-      # - /home/cyprien/docker/containers/opendkim:/etc/opendkim/keys
+mailserver:
+  image: hardware/mailserver
+  container_name: mailserver
+  domainname: homedia.ovh
+  hostname: mail
+  links:
+    - mariadb:mariadb
+  ports:
+    - "25:25"     # SMTP                - Required
+    - "143:143"   # IMAP       STARTTLS - For webmails/desktop clients
+    - "465:465"   # SMTPS      SSL/TLS  - Enabled for compatibility reason, otherwise disabled
+    - "587:587"   # Submission STARTTLS - For webmails/desktop clients
+    - "993:993"   # IMAPS      SSL/TLS  - For webmails/desktop clients
+    - "4190:4190" # SIEVE      STARTTLS - Optional, but recommended for mail filtering
+  environment:
+    - DBPASS=lefebvre
+  volumes:
+    - /home/cyprien/docker/containers/mail:/var/mail
+    - /home/cyprien/docker/containers/opendkim:/etc/opendkim/keys
 
-  # Control panel
-  # postfixadmin:
-    # image: hardware/postfixadmin
-    # container_name: postfixadmin
-    # domainname: homedia.ovh
-    # hostname: mail
-    # links:
-      # - db-mail:mariadb
-    # environment:
-      # - DBPASS=lefebvre
+# Control panel
+postfixadmin:
+  image: hardware/postfixadmin
+  container_name: postfixadmin
+  domainname: homedia.ovh
+  hostname: mail
+  links:
+    - mariadb:mariadb
+  environment:
+    - DBPASS=lefebvre
 
-  # Webmail
-  # rainloop:
-    # image: hardware/rainloop
-    # container_name: rainloop
-    # links:
-      # - mailserver:mailserver
-      # - db-mail:mariadb
-    # volumes:
-      # - /home/cyprien/docker/containers/rainloop:/rainloop/data
+# Webmail
+rainloop:
+  image: hardware/rainloop
+  container_name: rainloop
+  links:
+    - mailserver:mailserver
+    - mariadb:mariadb
+  volumes:
+    - /home/cyprien/docker/containers/rainloop:/rainloop/data
 
-  # Database
-  # db-mail:
-    # image: mariadb:10.1
-    # container_name: db-mail
-    # environment:
-      # - MYSQL_ROOT_PASSWORD=lefebvre
-      # - MYSQL_DATABASE=postfix
-      # - MYSQL_USER=postfix
-      # - MYSQL_PASSWORD=lefebvre
-    # volumes:
-      # - /home/cyprien/docker/containers/mysql/db:/var/lib/mysql
+# Database
+mariadb:
+  image: mariadb:10.1
+  container_name: mariadb
+  environment:
+    - MYSQL_ROOT_PASSWORD=lefebvre
+    - MYSQL_DATABASE=postfix
+    - MYSQL_USER=postfix
+    - MYSQL_PASSWORD=lefebvre
+  volumes:
+    - /home/cyprien/docker/containers/dbmail:/var/lib/mysql
+    
+## SHARELATEX
+
+# sharelatex:
+  # image: tiagoboldt/sharelatex-docker
+  # container_name: sharelatex
+  # volumes:
+    # - /home/cyprien/docker/containers/sharelatex:/data
+
+# mongo:
+  # image: mongo
+  # container_name: mongo
+  # volumes:
+    # - /home/cyprien/docker/containers/mongo:/data/db
+
+# redis:
+  # image: redis
+  # container_name: redis
+  # volumes:
+    # - /home/cyprien/docker/containers/redis:/data
+    
+# sharelatex:
+  # image: sharelatex/sharelatex
+  # container_name: sharelatex
+  # links:
+    # - redis:redis
+    # - mongo:mongo
+  # environment:
+    # - SHARELATEX_MONGO_URL=mongodb://mongo/sharelatex
+    # - SHARELATEX_REDIS_HOST=redis
+    # - SHARELATEX_SITE_URL=https://sharelatex.homedia.ovh
+openvpn:
+  image: kylemanna/openvpn
+  container_name: openvpn
+  volumes:
+    - /home/cyprien/openvpn/data:/etc/openvpn
+  ports:
+    - "1194:1194/udp"
+  cap_add:
+    - NET_ADMIN
+kodi:
+  image: linuxserver/kodi-headless
+  container_name: kodi
+  volumes:
+    - /home/cyprien/docker/containers/kodi:/config/.kodi
+    - /home/cyprien/seedbox:/data
+  environment:
+    - PGID=1000
+    - PUID=1000
+  ports:
+    - "9777:9777/udp"
+    - "8080:8080"
+  links:
+    - db_kodi:db_kodi
+db_kodi:
+  image: mariadb:10
+  container_name: db_kodi
+  volumes:
+    - /home/cyprien/docker/containers/kodi/db:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=supersecretpassword
+    - MYSQL_USER=kodi
+    - MYSQL_PASSWORD=supersecretpassword
+    
+boinc:  
+  image: wonderfall/boinc
+  container_name: boinc
+  hostname: homedia
+  cpuset: 0,1
+  volumes:
+    - /home/cyprien/docker/containers/boinc:/home/boinc
