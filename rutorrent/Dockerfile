@@ -17,18 +17,13 @@ RUN echo "@commuedge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/ap
  && apk -U add \
     ${BUILD_DEPS} \
  && mkdir -p /var/www && cd /var/www \
- && git clone https://github.com/Novik/ruTorrent.git rutorrent \
+ && git clone https://github.com/Novik/ruTorrent.git rutorrent --depth=1 \
  && cd /var/www/rutorrent/plugins/ \
- && git clone https://github.com/xombiemp/rutorrentMobile.git mobile \
- && cd /var/www/rutorrent/plugins/ \
- && wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rutorrent-pausewebui/pausewebui.1.2.zip  \
- && unzip pausewebui.1.2.zip  \
- && rm -rf pausewebui.1.2.zip  \
- && rm -rf pausewebui/__MACOSX/ \
+ && git clone https://github.com/Korni22/rutorrent-logoff logoff --depth=1 \
+ && git clone https://github.com/xombiemp/rutorrentMobile.git mobile --depth=1 \
+ && git clone https://github.com/Ardakilic/rutorrent-pausewebui pausewebui --depth=1 \
  && cd /var/www/rutorrent/plugins/theme/themes \
- && wget https://raw.githubusercontent.com/Swizards/QuickBox/master/plugins/rutorrent-quickbox-dark.zip \
- && unzip rutorrent-quickbox-dark.zip \
- && rm -rf rutorrent-quickbox-dark.zip \
+ && git clone https://github.com/Phlooo/ruTorrent-MaterialDesign.git Material --depth=1 \
  && cd /var/www/rutorrent/plugins/theme/themes \
  && git clone https://github.com/exetico/FlatUI.git \
  && mv FlatUI/FlatUI_* . && rm -rf FlatUI \
