@@ -7,10 +7,6 @@ LABEL description="RuFy based on alpine" \
       build_ver="2016050301"
 
 RUN export BUILD_DEPS="git \
-                build-base \
-                libffi-dev \
-                linux-headers \
-                openssl-dev \
                 py-pip \
                 python-dev" \
     && apk add -U python \
