@@ -6,7 +6,6 @@ mkdir -p /data/.watch
 mkdir -p /data/.session
 mkdir -p /data/Media/Movies
 mkdir -p /data/Media/TV
-mkdir -p /data/Media/Animes
 mkdir -p /data/Media/Music
 
 if [ $WEBROOT != "/" ]; then
