@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM xataz/node:onbuild
 MAINTAINER Cyprien <https://github.com/MisterCyp/dockerfiles>
 
 ENV UID=1000 GID=1000 WEBROOT=/rufy
@@ -16,7 +16,6 @@ RUN export BUILD_DEPS="git \
     && apk add -U python \
                 supervisor \
                 nginx \
-                nodejs \
                 su-exec \
                 ${BUILD_DEPS} \
     && pip --no-cache-dir install virtualenv \
