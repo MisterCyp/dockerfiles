@@ -17,6 +17,7 @@ RUN export BUILD_DEPS="git \
                 supervisor \
                 nginx \
                 nodejs \
+                su-exec \
                 ${BUILD_DEPS} \
     && pip --no-cache-dir install virtualenv \
     && git clone https://github.com/shyne99/RuFy.git --branch transcode --single-branch /var/www/RuFy \
