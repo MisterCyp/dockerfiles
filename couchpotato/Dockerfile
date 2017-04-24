@@ -24,8 +24,11 @@ RUN export BUILD_DEPS="py-pip \
     && git clone https://github.com/CouchPotato/CouchPotatoServer \
     && cd /CouchPotatoServer \
     && pip install lxml pyopenssl \
+    && cd /tmp \
+    && git clone https://github.com/djoole/couchpotato.provider.t411.git t411provider \
+    && cd t411provider &&  mv t411 /config/data/custom_plugins \
     && apk del ${BUILD_DEPS} \
-    && rm -fr /var/cache/apk/*
+    && rm -fr /var/cache/apk/* /tmp/*
 
 VOLUME ["/config"]
 EXPOSE 5050

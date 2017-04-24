@@ -1,39 +1,43 @@
-﻿nginx:
+nginx:
   restart: always
   container_name: nginx
-  image: mistercyp/reverse
+  image: wonderfall/boring-nginx 
+  #mistercyp/reverse
   ports:
     - "80:8000"
     - "443:4430"
   links:
     - php:php
     - rutorrent:rutorrent
-    # - emby:emby
+   # - emby:emby
     - sickrage:sickrage
-    - couchpotato:couchpotato
+    #- couchpotato:couchpotato
     - rufy:rufy
-    - owncloud:owncloud
+    #- owncloud:owncloud
+    - nextcloud:nextcloud
     - postfixadmin:postfixadmin
     - rainloop:rainloop
     #- sharelatex:sharelatex
+   # - sonerezh:sonerezh
   volumes:
    - /home/cyprien/docker/containers/nginx/sites:/sites-enabled
    - /home/cyprien/docker/containers/nginx/conf:/conf.d
    - /etc/letsencrypt:/certs
    - /home/cyprien/docker/containers/nginx/log:/var/log/nginx
-   - /home/cyprien/docker/containers/nginx/www:/var/www/html
+   - /home/cyprien/docker/containers/nginx/www:/www
    - /home/cyprien/docker/containers/nginx/passwds:/passwds
 
     
 php:
   container_name: php
-  image: php-intl 
+  image: php:fpm-alpine 
   volumes:
-    - /home/cyprien/docker/containers/nginx/www:/var/www/html
+    - /home/cyprien/docker/containers/nginx/www:/www
     
 rutorrent:
   image: mistercyp/rutorrent
-   # build:
+  restart: always
+ # build:
    #  context: /home/cyprien/docker/dockerfiles/rutorrent
    #  dockerfile: Dockerfile
   container_name: rutorrent
@@ -48,18 +52,18 @@ rutorrent:
     - /home/cyprien/seedbox:/data
     - /home/cyprien/seedbox/rutorrent/rc:/home/torrent 
     - /home/cyprien/seedbox/rutorrent/log:/var/log/nginx 
-# emby:
-  # container_name: emby
-  # image: xataz/emby
-  # environment:
-    # - UID=1000
-    # - GID=1000
-  # ports:
-    # - "8096:8096"
-    # - "8920:8920"
-  # volumes:
-    # - /home/cyprien/docker/containers/emby/config:/embyData
-    # - /home/cyprien/seedbox/Media:/Media
+#emby:
+#  container_name: emby
+#  image: xataz/emby
+#  environment:
+#    - UID=1000
+#    - GID=1000
+#  ports:
+#    - "8096:8096"
+#    - "8920:8920"
+#  volumes:
+#    - /home/cyprien/docker/containers/emby/config:/embyData
+#    - /home/cyprien/seedbox/Media:/Media
       
 sickrage:
   container_name: sickrage
@@ -84,40 +88,17 @@ rufy:
     - /home/cyprien/docker/containers/nginx/log:/var/www/RuFy/log
     - /home/cyprien/docker/containers/rufy/db:/var/www/RuFy/db
     - /home/cyprien/seedbox/.watch:/watch
-owncloud:
-  image: wonderfall/owncloud:9.0
-  container_name: owncloud
-  links:
-    - db_owncloud:db_owncloud
-  environment:
-    - UID=1000
-    - GID=1000
-  volumes:
-    - /home/cyprien/docker/containers/owncloud/data:/data
-    - /home/cyprien/docker/containers/owncloud/config:/config
-    - /home/cyprien/docker/containers/owncloud/apps:/apps2
-
-db_owncloud:
-  image: mariadb:10
-  container_name: db_owncloud
-  volumes:
-    - /home/cyprien/docker/containers/owncloud/db:/var/lib/mysql
-  environment:
-    - MYSQL_ROOT_PASSWORD=supersecretpassword
-    - MYSQL_DATABASE=owncloud
-    - MYSQL_USER=owncloud
-    - MYSQL_PASSWORD=supersecretpassword
     
-couchpotato:
-  container_name: couchpotato
-  image: mistercyp/couchpotato
-  environment:
-    - UID=1000
-    - GID=1000
-    - WEBROOT=/cp
-  volumes:
-    - /home/cyprien/docker/containers/couchpotato:/config
-    - /home/cyprien/seedbox:/seedbox
+# couchpotato:
+  # container_name: couchpotato
+  # image: mistercyp/couchpotato
+  # environment:
+    # - UID=1000
+    # - GID=1000
+    # - WEBROOT=/cp
+  # volumes:
+    # - /home/cyprien/docker/containers/couchpotato:/config
+    # - /home/cyprien/seedbox:/seedbox
       
 mailserver:
   image: hardware/mailserver
@@ -171,37 +152,7 @@ mariadb:
     - MYSQL_PASSWORD=lefebvre
   volumes:
     - /home/cyprien/docker/containers/dbmail:/var/lib/mysql
-    
-## SHARELATEX
-
-# sharelatex:
-  # image: tiagoboldt/sharelatex-docker
-  # container_name: sharelatex
-  # volumes:
-    # - /home/cyprien/docker/containers/sharelatex:/data
-
-# mongo:
-  # image: mongo
-  # container_name: mongo
-  # volumes:
-    # - /home/cyprien/docker/containers/mongo:/data/db
-
-# redis:
-  # image: redis
-  # container_name: redis
-  # volumes:
-    # - /home/cyprien/docker/containers/redis:/data
-    
-# sharelatex:
-  # image: sharelatex/sharelatex
-  # container_name: sharelatex
-  # links:
-    # - redis:redis
-    # - mongo:mongo
-  # environment:
-    # - SHARELATEX_MONGO_URL=mongodb://mongo/sharelatex
-    # - SHARELATEX_REDIS_HOST=redis
-    # - SHARELATEX_SITE_URL=https://sharelatex.homedia.ovh
+   
 openvpn:
   image: kylemanna/openvpn
   container_name: openvpn
@@ -211,34 +162,128 @@ openvpn:
     - "1194:1194/udp"
   cap_add:
     - NET_ADMIN
-kodi:
-  image: linuxserver/kodi-headless
-  container_name: kodi
-  volumes:
-    - /home/cyprien/docker/containers/kodi:/config/.kodi
-    - /home/cyprien/seedbox:/data
-  environment:
-    - PGID=1000
-    - PUID=1000
-  ports:
-    - "9777:9777/udp"
-    - "8080:8080"
-  links:
-    - db_kodi:db_kodi
-db_kodi:
-  image: mariadb:10
-  container_name: db_kodi
-  volumes:
-    - /home/cyprien/docker/containers/kodi/db:/var/lib/mysql
-  environment:
-    - MYSQL_ROOT_PASSWORD=supersecretpassword
-    - MYSQL_USER=kodi
-    - MYSQL_PASSWORD=supersecretpassword
+# kodi:
+  # image: linuxserver/kodi-headless
+  # container_name: kodi
+  # volumes:
+    # - /home/cyprien/docker/containers/kodi:/config/.kodi
+    # - /home/cyprien/seedbox:/data
+  # environment:
+    # - PGID=1000
+    # - PUID=1000
+  # ports:
+    # - "9777:9777/udp"
+    # - "8080:8080"
+  # links:
+    # - db_kodi:db_kodi
+# db_kodi:
+  # image: mariadb:10
+  # container_name: db_kodi
+  # volumes:
+    # - /home/cyprien/docker/containers/kodi/db:/var/lib/mysql
+  # environment:
+    # - MYSQL_ROOT_PASSWORD=supersecretpassword
+    # - MYSQL_USER=kodi
+    # - MYSQL_PASSWORD=supersecretpassword
     
-boinc:  
-  image: wonderfall/boinc
-  container_name: boinc
-  hostname: homedia
-  cpuset: 0,1
+#boinc:  
+#  image: wonderfall/boinc
+#  container_name: boinc
+#  hostname: homedia
+#  cpuset: 0,1
+#  volumes:
+#    - /home/cyprien/docker/containers/boinc:/home/boinc
+
+#sharelatex:
+#  image: sharelatex/sharelatex
+#  container_name: sharelatex
+#  privileged: true
+#  ports:
+#    - "1234:80"
+#  links:
+#    - mongo
+#    - redis
+#  volumes:
+#    - /home/cyprien/docker/containers/sharelatex/data:/var/lib/sharelatex
+#  environment:
+#    SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
+#    SHARELATEX_REDIS_HOST: redis
+#    SHARELATEX_APP_NAME: 'Our ShareLaTeX'
+#    SHARELATEX_SITE_URL: "http://sharelatex.homedia.ovh"
+#    SHARELATEX_NAV_TITLE: "Our ShareLaTeX Instance"
+#    SHARELATEX_ADMIN_EMAIL: "mistercyp59@gmail.com"
+
+#mongo:
+#  image: mongo
+#  container_name: mongo
+#  expose:
+#    - 27017
+#  volumes:
+#    - /home/cyprien/docker/containers/sharelatex/mongo:/data/db
+
+#redis:
+#  image: redis
+#  container_name: redis
+#  expose:
+#    - 6379
+#  volumes:
+#    - /home/cyprien/docker/containers/sharelatex/redis:/data
+#sonerezh-db:
+#  image: mariadb
+#  container_name: sonerezh-db
+#  environment:
+#    - MYSQL_ROOT_PASSWORD=lefebvre
+#    - MYSQL_DATABASE=sonerezh
+#    - MYSQL_USER=sonerezh
+#    - MYSQL_PASSWORD=lefebvre
+#  volumes:
+#    - /home/cyprien/docker/containers/sonerezh/db:/var/lib/mysql
+
+#sonerezh:
+#  image: sonerezh/sonerezh:latest
+#  container_name: sonerezh
+#  links:
+#    - sonerezh-db:sonerezh-db
+#  volumes:
+#    - /home/cyprien/seedbox/Media/Music:/music
+#    - /home/cyprien/docker/containers/sonerezh/thumbnails:/thumbnails
+
+nextcloud:
+  image: wonderfall/nextcloud
+  container_name: nextcloud
+  links:
+    - nextcloud-db:nextcloud-db   # If using MySQL
+  environment:
+    - UID=1000
+    - GID=1000
+    - ADMIN_USER=admin            # Don't set to configure through browser
+    - ADMIN_PASSWORD=lefebvre        # Don't set to configure through browser
+    - UPLOAD_MAX_SIZE=10G
+    - APC_SHM_SIZE=128M
+    - OPCACHE_MEM_SIZE=128
+    - CRON_PERIOD=15m
+    - TZ=Europe/Berlin
+    - DOMAIN=localhost
+    - DB_TYPE=mysql
+    - DB_NAME=nextcloud
+    - DB_USER=nextcloud
+    - DB_PASSWORD=lefebvre
+    - DB_HOST=nextcloud-db
   volumes:
-    - /home/cyprien/docker/containers/boinc:/home/boinc
+    - /home/cyprien/docker/containers/nextcloud/data:/data
+    - /home/cyprien/docker/containers/nextcloud/config:/config
+    - /home/cyprien/docker/containers/nextcloud/apps:/apps2
+    - /home/cyprien/docker/containers/nextcloud/themes:/nextcloud/themes
+
+# If using MySQL
+nextcloud-db:
+  container_name: nextcloud-db
+  image: mariadb:10
+  volumes:
+    - /home/cyprien/docker/containers/nextcloud/db:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=lefebvre
+    - MYSQL_DATABASE=nextcloud
+    - MYSQL_USER=nextcloud
+    - MYSQL_PASSWORD=lefebvre
+ 
