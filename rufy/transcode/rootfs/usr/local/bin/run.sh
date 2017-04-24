@@ -29,7 +29,6 @@ npm install
 chown -R rufy:rufy /var/www/RuFy /watch /tmp
 
 chmod +x /var/www/RuFy/gunicorn_start
-#sh /var/www/RuFy/gunicorn_start &
-su-exec ${UID}:${GID} sh -c "sh /var/www/RuFy/gunicorn_start"
-su-exec ${UID}:${GID} sh -c "node /var/www/RuFy/nodejs/index.js"
+sh /var/www/RuFy/gunicorn_start &
+node /var/www/RuFy/nodejs/index.js & 
 supervisord -c /usr/local/etc/supervisord.conf
