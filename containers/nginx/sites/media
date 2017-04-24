@@ -1,0 +1,54 @@
+server {
+
+  listen 8000;
+  server_name media.homedia.ovh;
+  return 301 https://$host$request_uri;
+
+}
+
+server {
+  listen 4430 ssl http2;
+  server_name media.homedia.ovh;
+
+  ssl_certificate /certs/live/media.homedia.ovh/fullchain.pem;
+  ssl_certificate_key /certs/live/media.homedia.ovh/privkey.pem;
+
+  include /conf.d/ssl_params.conf;
+  include /conf.d/headers.conf;
+  include /conf.d/php.conf;
+  include /conf.d/cache.conf;
+  
+  client_max_body_size 10G;
+  
+  satisfy any;
+  allow all;
+                
+  root   /var/www/html/media/webroot;
+  index  index.php;
+  
+  location / {
+        try_files $uri /index.php?$args;
+   }
+   
+  
+  location /access/films {
+      alias /home/cyprien/Media/Films;
+      allow all;
+      satisfy any;
+      add_header Content-Disposition "attachment";
+  }
+  
+  location /access/series {
+      alias /home/cyprien/Media/Series;
+      allow all;
+      satisfy any;
+      add_header Content-Disposition "attachment";
+  }
+  
+  location /access/musique {
+      alias /home/cyprien/Media/Musiques;
+      allow all;
+      satisfy any;
+      add_header Content-Disposition "attachment";
+  }
+}
