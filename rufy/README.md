@@ -5,8 +5,8 @@
 - **/watch** : Dossier watch de RuTorrent
 - **/var/www/RuFy/log** : log des accès 
 - **/var/www/RuFy/db** : base de données
-- 
-####Port
+
+#### Port
 port utilisé dans le conteneur : 80 
 
 #### Variables d'environnement
@@ -15,13 +15,13 @@ port utilisé dans le conteneur : 80
 - GID : groupe de l'utilisateur qui lance RuFy (par défaut 1000)
 
 #### Comment l'utiliser ?
-#####Docker Run:
+##### Docker Run:
 ```
 docker run -d -p 1234:80 -e WEBROOT=/rufy -e UID=1000 -e GID=1000 -v /home/cyprien/seedbox/.watch:/watch --name rufy mistercyp/rufy
 ```
 Accès :  http://votreIPouNDD.tld:1234/rufy
 
-#####Docker-compose.yml :
+##### Docker-compose.yml :
 ```
 nginx:
     container_name: nginx
